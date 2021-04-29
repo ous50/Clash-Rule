@@ -1,17 +1,28 @@
 port: 11027
 socks-port: 11028
+mixed-port: 7890
 allow-lan: true
 ipv6: false
 mode: Rule
 log-level: debug
 external-controller: 127.0.0.1:9090
-dns:
-  enable: true
-  ipv6: false
-  listen: 0.0.0.0:1027
-  enhanced-mode: fake-ip
-  fake-ip-range: 198.18.0.1/16
-  default-nameserver:
-    - 223.5.5.5
-  nameserver:
-    - tls://223.5.5.5:853
+mixin: # object
+  dns:
+    enable: true
+    enhanced-mode: redir-host
+    nameserver:
+      - tls://223.5.5.5:853
+      - tls://dns.ikenway.net:953
+      - https://dns.ikenway.net:10053/dns-query
+      - 8.8.8.8
+      - 1.1.1.1  # 真实请求DNS，可多设置几个
+      - 114.114.114.114
+  # interface-name: WLAN 
+  tun:
+    enable: true
+    stack: gvisor
+    dns-hijack:
+      - 198.18.0.2:53
+    macOS-auto-route: true
+    macOS-auto-detect-interface: true 
+
